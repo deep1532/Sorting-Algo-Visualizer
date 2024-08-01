@@ -42,11 +42,11 @@ export function Controller(props) {
     const [isPausing, setIsPausing] = useState(false);
     const data = props.data
     const controls = props.controls
-    const [
-        algorithm,
-        sortingArray,
-        setSortingArray
-    ] = [data.algorithm, data.sortingArray, data.setAlgorithm, data.setSortingArray]
+    const [algorithm, sortingArray, setSortingArray] = [
+      data.algorithm,
+      data.sortingArray,
+      data.setSortingArray,
+    ];
     const [
         progress,
         speed,
@@ -84,7 +84,7 @@ export function Controller(props) {
           case "done":
             return disabledPauseElement;
           default:
-            return startElement;
+            return null;
         }
     }
 

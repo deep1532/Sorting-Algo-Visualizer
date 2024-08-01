@@ -6,13 +6,10 @@ import { useCallback } from 'react';
 
 export function NavBar({algorithm, setAlgorithm, resetSorting}) {
     // const [algorithm, setAlgorithm] = useData();
-    const handleChange = useCallback(
-      (event, id) => {
-        setAlgorithm(id);
-        resetSorting();
-      },
-      [setAlgorithm, resetSorting]
-    ); 
+    const handleChange = useCallback((event, id) => {
+      setAlgorithm(id);
+      resetSorting();
+    }, []); 
     return (
         <>
             <h2>Sorting Algorithms Visualizer</h2>
