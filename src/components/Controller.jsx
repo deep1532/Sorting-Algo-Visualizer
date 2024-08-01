@@ -45,7 +45,6 @@ export function Controller(props) {
     const [
         algorithm,
         sortingArray,
-        setAlgorithm,
         setSortingArray
     ] = [data.algorithm, data.sortingArray, data.setAlgorithm, data.setSortingArray]
     const [

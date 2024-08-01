@@ -54,16 +54,15 @@ export function SortManager(props) {
   //     console.log("##unmounted..",props.data.algorithm);
   //   }
   // },[])
-  useEffect(() => { 
+  useEffect(() => {
     progress.current = controls.progress;
     if (progress.current === "start") runAlgo();
     if (progress.current === "reset") reset();
     return () => {
       isComponentUnMounted.current = true;
     };
-  }, [controls.progress]);
+  }, [controls.progress, runAlgo, reset]);
 
- 
   useEffect(() => {
     swapTimeRef.current = controls.swapTime; // Update refs when controls change
     compareTimeRef.current = controls.compareTime;
@@ -71,7 +70,7 @@ export function SortManager(props) {
 
   useEffect(() => {
     reset();
-  }, [array]);
+  }, [array, reset]);
 
   function markSortngDone() {
     if (isall) {
