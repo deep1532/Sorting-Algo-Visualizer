@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { ArrayContainer } from "./ArrayContainer";
-import { MergeContainer } from "./MergeContainer"
+import { MergeContainer } from "./MergeContainer";
 import { delay } from "../../common/config";
-import Card from '@mui/material/Card';
+import Card from "@mui/material/Card";
 import { Timer } from "./Timer";
 import { InfoFooter } from "./InfoFooter copy";
-import { sortingAlgorithms } from "../../common/config"
+import { sortingAlgorithms } from "../../common/config";
 
 const Container = styled(Card)`
   padding: 10px;
@@ -28,12 +28,12 @@ const TimerDiv = styled.div`
 `;
 
 export function SortManager(props) {
-  const data = props.data
-  const isall = props.isall
-  const controls = props.controls
-  const array = data.sortingArray
-  const sortFunction = props.sortFunction
-  const sortingAlgorithmName = props.sortingAlgorithmName
+  const data = props.data;
+  const isall = props.isall;
+  const controls = props.controls;
+  const array = data.sortingArray;
+  const sortFunction = props.sortFunction;
+  const sortingAlgorithmName = props.sortingAlgorithmName;
   const [swapIndices, setSwapIndices] = useState([-1, -1]);
   const [hightlightedIndices, setHightlightedIndices] = useState([-1, -1]);
   const algoArray = useRef([]);
@@ -45,15 +45,49 @@ export function SortManager(props) {
   const isComponentUnMounted = useRef(false);
   const progress = useRef("");
   const sortProgressIterator = useRef(null);
-  const swapTimeRef = useRef(controls.swapTime); // Add these refs
+  const swapTimeRef = useRef(controls.swapTime);
   const compareTimeRef = useRef(controls.compareTime);
-  
-  // useEffect(() => {
-  //   console.log("##mounted...", props.data.algorithm);
-  //   return ()=>{
-  //     console.log("##unmounted..",props.data.algorithm);
-  //   }
-  // },[])
+
+  // Wrapped reset function in useCallback to stabilize its reference
+  const reset = useCallback(async () => {
+    algoArray.current = [...array];
+    sortedIndices.current = [];
+    pivot.current = -1;
+    swapCount.current = 0;
+    comparisionCount.current = 0;
+    isAlgoExecutionOver.current = false;
+    setSwapIndices([-1, -1]);
+    setHightlightedIndices([-1, -1]);
+
+    sortProgressIterator.current =
+      sortingAlgorithmName === "MergeSort"
+        ? await sortFunction(algoArray.current, combine, highlight, markSort)
+        : await sortFunction(algoArray.current, swap, highlight, markSort);
+  }, [
+    array,
+    sortingAlgorithmName,
+    sortFunction,
+    combine,
+    highlight,
+    markSort,
+    swap,
+  ]);
+
+  // Wrapped runAlgo function in useCallback to stabilize its reference
+  const runAlgo = useCallback(async () => {
+    let completion = { done: false };
+    while (!completion?.done && progress.current === "start") {
+      completion = await sortProgressIterator.current?.next();
+    }
+    if (!isAlgoExecutionOver.current && completion?.done) {
+      isAlgoExecutionOver.current = true;
+      pivot.current = -1;
+      setSwapIndices([-1, -1]);
+      setHightlightedIndices([-1, -1]);
+      markSortngDone();
+    }
+  }, [progress, markSortngDone]);
+
   useEffect(() => {
     progress.current = controls.progress;
     if (progress.current === "start") runAlgo();
@@ -61,16 +95,16 @@ export function SortManager(props) {
     return () => {
       isComponentUnMounted.current = true;
     };
-  }, [controls.progress, runAlgo, reset]);
+  }, [controls.progress, runAlgo, reset]); // Updated dependencies array
 
   useEffect(() => {
-    swapTimeRef.current = controls.swapTime; // Update refs when controls change
+    swapTimeRef.current = controls.swapTime;
     compareTimeRef.current = controls.compareTime;
   }, [controls.swapTime, controls.compareTime]);
 
   useEffect(() => {
     reset();
-  }, [array, reset]);
+  }, [array, reset]); // Updated dependencies array
 
   function markSortngDone() {
     if (isall) {
@@ -91,7 +125,6 @@ export function SortManager(props) {
     algoArray.current[j] = tmp;
     setSwapIndices([i, j]);
     swapCount.current += 1;
-    // console.log("swap...", swapTimeRef.current)
     await delay(swapTimeRef.current);
   }
 
@@ -99,57 +132,19 @@ export function SortManager(props) {
     setSwapIndices([-1, -1]);
     comparisionCount.current += 1;
     setHightlightedIndices(indices);
-    // console.log("highlight compare...", compareTimeRef.current)
     await delay(compareTimeRef.current);
   }
 
   function markSort(...indices) {
     sortedIndices.current.push(...indices);
   }
+
   async function combine(source, destination) {
     if (source !== destination) {
       swapCount.current += 1;
       setHightlightedIndices([-1, -1]);
       setSwapIndices([source, destination]);
       await delay(swapTimeRef.current);
-    }
-  }
-
-  async function reset() {
-    algoArray.current = [...array];;
-    sortedIndices.current = [];
-    pivot.current = -1;
-    swapCount.current = 0;
-    comparisionCount.current = 0;
-    isAlgoExecutionOver.current = false;
-    setSwapIndices([-1, -1]);
-    setHightlightedIndices([-1, -1]);
-
-    sortProgressIterator.current =
-      sortingAlgorithmName === "MergeSort"
-        ? await sortFunction(algoArray.current, combine, highlight, markSort)
-        : await sortFunction(algoArray.current, swap, highlight, markSort);
-
-  }
-
-  async function runAlgo() {
-    let completion = { done: false };
-    while (
-      !completion?.done &&
-      progress.current === "start" //&&
-      // !isComponentUnMounted.current
-    ) {
-      completion = await sortProgressIterator.current?.next();
-    }
-    // if (isComponentUnMounted.current) {
-    //   return;
-    // }
-    if (!isAlgoExecutionOver.current && completion?.done) {
-      isAlgoExecutionOver.current = true;
-      pivot.current = -1;
-      setSwapIndices([-1, -1]);
-      setHightlightedIndices([-1, -1]);
-      markSortngDone();
     }
   }
 
@@ -199,4 +194,4 @@ export function SortManager(props) {
       </Container>
     </>
   );
-};
+}
