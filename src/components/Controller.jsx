@@ -4,8 +4,7 @@ import { Slider, TextField } from "@mui/material";
 import { VscDebugStart } from "react-icons/vsc";
 import { VscDebugRestart } from "react-icons/vsc";
 import { ImPause } from "react-icons/im";
-import { useEffect, useState } from "react";
-import { useData, useControls } from "../common/store";
+import { useState } from "react";
 import { AlgoDisplay } from "./AlgoDisplay";
 import {
     convertInputToArrayString,
@@ -77,14 +76,16 @@ export function Controller(props) {
             return disabledPauseElement;
 
         switch (progress) {
-            case "reset":
-                return startElement;
-            case "start":
-                return pauseElement;
-            case "pause":
-                return startElement;
-            case "done":
-                return disabledPauseElement;
+          case "reset":
+            return startElement;
+          case "start":
+            return pauseElement;
+          case "pause":
+            return startElement;
+          case "done":
+            return disabledPauseElement;
+          default:
+            return startElement;
         }
     }
 
