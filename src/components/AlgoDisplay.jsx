@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SortManager } from "./visualizer/SortManager"
 import { sortingAlgorithms } from "../common/config"
 import styled from "styled-components";

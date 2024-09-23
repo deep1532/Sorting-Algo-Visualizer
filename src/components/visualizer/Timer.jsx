@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useControls } from "../../common/store";
 
 export function Timer({ isAlgoExecutionOver, controls }) {
   const [minutes, setMinutes] = useState(0);

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { ArrayContainer } from "./ArrayContainer";
-import { MergeContainer } from "./MergeContainer";
+import { MergeContainer } from "./MergeContainer"
 import { delay } from "../../common/config";
-import Card from "@mui/material/Card";
+import Card from '@mui/material/Card';
 import { Timer } from "./Timer";
 import { InfoFooter } from "./InfoFooter copy";
-import { sortingAlgorithms } from "../../common/config";
+import { sortingAlgorithms } from "../../common/config"
 
 const Container = styled(Card)`
   padding: 10px;
@@ -28,12 +28,14 @@ const TimerDiv = styled.div`
 `;
 
 export function SortManager(props) {
-  const data = props.data;
-  const isall = props.isall;
-  const controls = props.controls;
-  const array = data.sortingArray;
-  const sortFunction = props.sortFunction;
-  const sortingAlgorithmName = props.sortingAlgorithmName;
+  const data = props.data
+  const isall = props.isall
+  const controls = props.controls
+  const resetSorting = controls.resetSorting
+  const array = data.sortingArray
+  const sortFunction = props.sortFunction
+  const sortingAlgorithmName = props.sortingAlgorithmName
+  const algoIdx = props.algoIdx
   const [swapIndices, setSwapIndices] = useState([-1, -1]);
   const [hightlightedIndices, setHightlightedIndices] = useState([-1, -1]);
   const algoArray = useRef([]);
@@ -43,18 +45,19 @@ export function SortManager(props) {
   const comparisionCount = useRef(0);
   const isAlgoExecutionOver = useRef(false);
   const isComponentUnMounted = useRef(false);
+  const isAlgorithmRunning = useRef(true);
   const progress = useRef("");
   const sortProgressIterator = useRef(null);
   const swapTimeRef = useRef(controls.swapTime); // Add these refs
   const compareTimeRef = useRef(controls.compareTime);
-
+  
   // useEffect(() => {
   //   console.log("##mounted...", props.data.algorithm);
   //   return ()=>{
   //     console.log("##unmounted..",props.data.algorithm);
   //   }
   // },[])
-  useEffect(() => {
+  useEffect(() => { 
     progress.current = controls.progress;
     if (progress.current === "start") runAlgo();
     if (progress.current === "reset") reset();
@@ -62,7 +65,7 @@ export function SortManager(props) {
       isComponentUnMounted.current = true;
     };
   }, [controls.progress]);
-
+ 
   useEffect(() => {
     swapTimeRef.current = controls.swapTime; // Update refs when controls change
     compareTimeRef.current = controls.compareTime;

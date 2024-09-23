@@ -4,7 +4,8 @@ import { Slider, TextField } from "@mui/material";
 import { VscDebugStart } from "react-icons/vsc";
 import { VscDebugRestart } from "react-icons/vsc";
 import { ImPause } from "react-icons/im";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useData, useControls } from "../common/store";
 import { AlgoDisplay } from "./AlgoDisplay";
 import {
     convertInputToArrayString,
@@ -42,11 +43,12 @@ export function Controller(props) {
     const [isPausing, setIsPausing] = useState(false);
     const data = props.data
     const controls = props.controls
-    const [algorithm, sortingArray, setSortingArray] = [
-      data.algorithm,
-      data.sortingArray,
-      data.setSortingArray,
-    ];
+    const [
+        algorithm,
+        sortingArray,
+        setAlgorithm,
+        setSortingArray
+    ] = [data.algorithm, data.sortingArray, data.setAlgorithm, data.setSortingArray]
     const [
         progress,
         speed,
@@ -75,16 +77,14 @@ export function Controller(props) {
             return disabledPauseElement;
 
         switch (progress) {
-          case "reset":
-            return startElement;
-          case "start":
-            return pauseElement;
-          case "pause":
-            return startElement;
-          case "done":
-            return disabledPauseElement;
-          default:
-            return null;
+            case "reset":
+                return startElement;
+            case "start":
+                return pauseElement;
+            case "pause":
+                return startElement;
+            case "done":
+                return disabledPauseElement;
         }
     }
 
